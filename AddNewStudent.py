@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter.ttk import Combobox
-from tkinter import ttk
+from tkinter import ttk,messagebox
 import random
+import mysql.connector
 
 
 month = ('JAN','FEB','MAR','APR','MAY','JUN', 'JUL','AUG','SEP','OCT','NOV','DEC')
@@ -61,8 +62,35 @@ class AddNewStudent:
         sectionCombo=ttk.Combobox(root, state="readonly",value= ['A','B','C','D','E'], textvariable=self.section,width = 4,height=10)
         sectionCombo.place(x=290,y=470)
         sectionCombo.current(0)
-        Button(root,height=1,width=20,text="Save", activebackground = "navy blue", activeforeground = "white",bg="azure3",cursor="hand2").place(x=100,y=530)
+        Button(root,height=1,width=20,text="Save", activebackground = "navy blue", activeforeground = "white",bg="azure3",command=self.addStudentToDb, cursor="hand2").place(x=100,y=530)
         Button(root,height=1,width=20,text="Close", activebackground = "navy blue", activeforeground = "white", bg="azure3",command = root.withdraw,cursor="hand2").place(x=290,y=530)
+
+    def addStudentToDb(self):
+        if self.section.get()=="":
+            messagebox.showerror('Error','All fields are required', parent=self.root)
+        else:
+            try:
+                conn=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
+                myCursor = conn.cursor()
+                formattedDOB = self.date.get() + " " + self.month.get()+" "+self.year.get()
+                formattedClassroom = self.grade.get() + " " + self.section.get()
+                myCursor.execute("INSERT INTO student values(%s,%s,%s,%s,%s,%s,%s,%s)",(
+                                                        self.studentNo.get(),
+                                                        self.firstName.get(),
+                                                        self.lastName.get(),
+                                                        self.gender.get(),
+                                                        formattedClassroom,
+                                                        self.phone.get(),
+                                                        self.email.get(),
+                                                        formattedDOB
+                                                        # ,
+                                                        # self.address.get
+                ))
+                messagebox.showinfo("SUCCESS","New student has been successfully Added to the Database")
+                conn.commit()
+                conn.close()
+            except Exception as e:
+                messagebox.showwarning("Warning","Something went wrong!")
 
 if __name__ == "__main__":
         root = Tk()
