@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter.ttk import Combobox
 from tkinter import ttk,messagebox
 import random
+from UpdateStudentInfo import UpdateStudentInfo
 import mysql.connector
 
 
@@ -70,27 +71,30 @@ class AddNewStudent:
             messagebox.showerror('Error','All fields are required', parent=self.root)
         else:
             try:
-                conn=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
-                myCursor = conn.cursor()
+                databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
+                myCursor = databaseConnection.cursor()
                 formattedDOB = self.date.get() + " " + self.month.get()+" "+self.year.get()
                 formattedClassroom = self.grade.get() + " " + self.section.get()
-                myCursor.execute("INSERT INTO student values(%s,%s,%s,%s,%s,%s,%s,%s)",(
+                myCursor.execute("INSERT INTO student values(%s,%s,%s,%s,%s,%s,%s,%s,%s)",(
                                                         self.studentNo.get(),
                                                         self.firstName.get(),
                                                         self.lastName.get(),
-                                                        self.gender.get(),
                                                         formattedClassroom,
+                                                        self.gender.get(),
                                                         self.phone.get(),
                                                         self.email.get(),
-                                                        formattedDOB
-                                                        # ,
-                                                        # self.address.get
+                                                        formattedDOB,
+                                                        self.address.get()
                 ))
                 messagebox.showinfo("SUCCESS","New student has been successfully Added to the Database")
-                conn.commit()
-                conn.close()
+                databaseConnection.commit()
+                UpdateStudentInfo.showStudentList()
+                databaseConnection.close()
             except Exception as e:
-                messagebox.showwarning("Warning","Something went wrong!")
+                messagebox.showwarning("Warning","Something went wrong! ")
+                print(e)
+
+
 
 if __name__ == "__main__":
         root = Tk()

@@ -5,9 +5,6 @@ from AddNewStudent import AddNewStudent
 from UpdateStudentInfo import UpdateStudentInfo
 
 
-month = ('JAN','FEB','MAR','APR','MAY','JUN', 'JUL','AUG','SEP','OCT','NOV','DEC')
-dates = list(range(1,32))
-year = list(range(1995, 2017))
 
 class Dashboard:
     def __init__(self, root):

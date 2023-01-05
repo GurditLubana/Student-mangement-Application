@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter.ttk import Combobox
 from tkinter import ttk
 import mysql.connector
-import random
 
 month = ('JAN','FEB','MAR','APR','MAY','JUN', 'JUL','AUG','SEP','OCT','NOV','DEC')
 dates = list(range(1,32))
@@ -17,9 +16,6 @@ class UpdateStudentInfo:
         # self.root.resizable(False,False)
 
         self.studentNo = StringVar()
-        x=random.randint(1000,9999)
-
-        self.studentNo.set("788"+str(x))
         self.firstName=StringVar()
         self.lastName=StringVar()
         self.gender=StringVar()
@@ -72,6 +68,9 @@ class UpdateStudentInfo:
         Button(root,height=1,width=20,font=("times new roman",13), text="Update", activebackground = "navy blue", activeforeground = "white",bg="azure3", cursor="hand2").place(x=460,y=600)
         Button(root,height=1,width=20,font=("times new roman",13), text="Close", activebackground = "navy blue", activeforeground = "white", bg="azure3",command = root.withdraw,cursor="hand2").place(x=680,y=600)
 
+        #=================================================================Student List Frame=========================================================================================================================
+        #============================================================================================================================================================================================================
+
         stdntListFrame = Frame(self.root,bd=4, relief=GROOVE)
         stdntListFrame.place(x=450,y=70,width=875,height =500)
 
@@ -94,7 +93,7 @@ class UpdateStudentInfo:
         scrollx= ttk.Scrollbar(listFrame,orient=HORIZONTAL)
         scrolly= ttk.Scrollbar(listFrame,orient=VERTICAL)
 
-        self.studentsList = ttk.Treeview(listFrame,column=('stdnum','fname','lname','classroom','phone','gender','email','dob'),xscrollcommand=scrollx.set,yscrollcommand=scrolly.set)
+        self.studentsList = ttk.Treeview(listFrame,column=('stdnum','fname','lname','classroom','gender','phone','email','dob','address'),xscrollcommand=scrollx.set,yscrollcommand=scrolly.set)
         scrollx.pack(side=BOTTOM,fill=X)
         scrolly.pack(side=RIGHT,fill=Y)
         scrollx.config(command=self.studentsList.xview)
@@ -103,11 +102,14 @@ class UpdateStudentInfo:
         self.studentsList.heading('stdnum',text='Student No')
         self.studentsList.heading('fname',text='First Name')
         self.studentsList.heading('lname',text='Last Name')
-        self.studentsList.heading('gender',text='Gender')
         self.studentsList.heading('classroom',text='Classroom')
+        self.studentsList.heading('gender',text='Gender')
         self.studentsList.heading('phone',text='Phone No')
         self.studentsList.heading('email',text='Email')
         self.studentsList.heading('dob',text='DOB')
+        self.studentsList.heading('address',text='Address')
+
+
 
         self.studentsList.column('stdnum',width=100)
         self.studentsList.column('fname',width=100)
@@ -117,12 +119,47 @@ class UpdateStudentInfo:
         self.studentsList.column('phone',width=100)
         self.studentsList.column('email',width=100)
         self.studentsList.column('dob',width=100)
+        self.studentsList.column('address',width=200)
        
 
 
 
         self.studentsList['show'] = 'headings'
         self.studentsList.pack(fill=BOTH,expand=True)
+        self.studentsList.bind("<ButtonRelease-1>",self.getStudentDetails)
+        self.showStudentList()
+
+    def showStudentList(self):
+        databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
+        commandSelected = databaseConnection.cursor()
+        commandSelected.execute("SELECT * FROM student_list.student")
+        studentDetail = commandSelected.fetchall()
+        if(len(studentDetail)!=0):
+            self.studentsList.delete(*self.studentsList.get_children())
+            for everyStudent in studentDetail:
+                self.studentsList.insert("",END,values = everyStudent)
+
+        databaseConnection.commit()
+        databaseConnection.close()
+
+    def getStudentDetails(self,values=""):
+        focusedStudent= self.studentsList.focus()
+        tabelContent = self.studentsList.item(focusedStudent)
+        studentDetailsRow =tabelContent['values']
+
+        self.studentNo.set(studentDetailsRow[0])
+        self.firstName.set(studentDetailsRow[1])
+        self.lastName.set(studentDetailsRow[2])
+        self.gender.set(studentDetailsRow[4])
+        self.date.set(studentDetailsRow[-2][0])
+        self.month.set(studentDetailsRow[-2][2:6])
+        self.year.set(studentDetailsRow[-2][6:])
+        self.phone.set(studentDetailsRow[5])
+        self.email.set(studentDetailsRow[6])
+        self.address.set(studentDetailsRow[-1])
+        self.grade.set(studentDetailsRow[3][0])
+        self.section.set(studentDetailsRow[3][-1])
+
 
 
 if __name__ == "__main__":
