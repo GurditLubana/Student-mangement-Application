@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter.ttk import Combobox
-from tkinter import ttk
+from tkinter import ttk,messagebox
 import mysql.connector
 
 month = ('JAN','FEB','MAR','APR','MAY','JUN', 'JUL','AUG','SEP','OCT','NOV','DEC')
@@ -44,14 +44,14 @@ class UpdateStudentInfo:
         Label(root,text='Last Name ', font=("times new roman",13)).place(x=70,y=170)
         ttk.Entry(root,width=20,textvariable=self.lastName,font=("times new roman",13)).place(x=190,y=170)
         Label(root,text='Gender ', font=("times new roman",13)).place(x=70,y=210)
-        Combobox(root, state="readonly",value= ['MALE','FEMALE','OTHERS'],font=("times new roman",13), textvariable=self.gender,width = 8,height=10).place(x=190,y=210)
+        
         Label(root,text='Date of Birth:', font=("times new roman",13)).place(x=70,y=250)
         Label(root,text='Date', font=("times new roman",13)).place(x=70,y=280)
-        Combobox(root, state="readonly",value=dates,font=("times new roman",13), textvariable=self.date,width = 2,height=10).place(x=110,y=280)
+        
         Label(root,text='Month', font=("times new roman",13)).place(x=155,y=280)
-        Combobox(root, state="readonly",value=month,font=("times new roman",13), textvariable=self.month,width = 4,height=10).place(x=210,y=280)
+        
         Label(root,text='Year', font=("times new roman",13)).place(x=270,y=280)
-        Combobox(root, state="readonly",value=year,font=("times new roman",13), textvariable=self.year,width = 5,height=10).place(x=310,y=280)
+        
         Label(root,text='Phone No ', font=("times new roman",13)).place(x=70,y=320)
         ttk.Entry(root,textvariable=self.phone,width=20,font=("times new roman",13)).place(x=190,y=320)
         Label(root,text='Email ', font=("times new roman",13)).place(x=70,y=360)
@@ -60,13 +60,27 @@ class UpdateStudentInfo:
         Entry(root,width=20,textvariable=self.address,font=("times new roman",13)).place(x=190,y=400,height=35)
         Label(root,text='Assigned Classroom:', font=("times new roman",13)).place(x=70,y=440)
         Label(root,text='Grade ', font=("times new roman",13)).place(x=70,y=470)
-        Combobox(root, state="readonly",value=list(range(1, 13)), textvariable=self.grade,width = 4,height=10,font=("times new roman",13)).place(x=150,y=470)
-        Label(root,text='Section ', font=("times new roman",13)).place(x=220,y=470)
+        genderCombobox = Combobox(root, state="readonly",value= ['MALE','FEMALE','OTHERS'],font=("times new roman",13), textvariable=self.gender,width = 8,height=10)
+        genderCombobox.place(x=190,y=210)
+        genderCombobox.current(0)
+        dateCombobox=Combobox(root, state="readonly",value=dates,font=("times new roman",13), textvariable=self.date,width = 2,height=10)
+        dateCombobox.place(x=110,y=280)
+        dateCombobox.current(0)
+        monthCombobox=Combobox(root, state="readonly",value=month,font=("times new roman",13), textvariable=self.month,width = 4,height=10)
+        monthCombobox.place(x=210,y=280)
+        monthCombobox.current(0)
+        yearCombobox=Combobox(root, state="readonly",value=year,font=("times new roman",13), textvariable=self.year,width = 5,height=10)
+        yearCombobox.place(x=310,y=280)
+        yearCombobox.current(0)
+        gradeCombobox=Combobox(root, state="readonly",value=list(range(1, 13)), textvariable=self.grade,width = 4,height=10,font=("times new roman",13))
+        gradeCombobox.place(x=150,y=470)
+        gradeCombobox.current(0)
         sectionCombo=ttk.Combobox(root, state="readonly",value= ['A','B','C','D','E'], textvariable=self.section,width = 4,height=10)
         sectionCombo.place(x=290,y=470)
         sectionCombo.current(0)
-        Button(root,height=1,width=20,font=("times new roman",13), text="Update", activebackground = "navy blue", activeforeground = "white",bg="azure3", cursor="hand2").place(x=460,y=600)
-        Button(root,height=1,width=20,font=("times new roman",13), text="Close", activebackground = "navy blue", activeforeground = "white", bg="azure3",command = root.withdraw,cursor="hand2").place(x=680,y=600)
+        Label(root,text='Section ', font=("times new roman",13)).place(x=220,y=470)
+        Button(root,height=1,width=20,font=("times new roman",13), text="Update", activebackground = "navy blue", activeforeground = "white",bg="azure3", command=self.updateStudentDetails,cursor="hand2").place(x=460,y=600)
+        Button(root,height=1,width=20,font=("times new roman",13), text="Close", activebackground = "navy blue", activeforeground = "white", bg="azure3",command = self.deleteStudent,cursor="hand2").place(x=680,y=600)
 
         #=================================================================Student List Frame=========================================================================================================================
         #============================================================================================================================================================================================================
@@ -93,7 +107,7 @@ class UpdateStudentInfo:
         scrollx= ttk.Scrollbar(listFrame,orient=HORIZONTAL)
         scrolly= ttk.Scrollbar(listFrame,orient=VERTICAL)
 
-        self.studentsList = ttk.Treeview(listFrame,column=('stdnum','fname','lname','classroom','gender','phone','email','dob','address'),xscrollcommand=scrollx.set,yscrollcommand=scrolly.set)
+        self.studentsList = ttk.Treeview(listFrame,column=('stdnum','fname','lname','gender','classroom','phone','email','dob','address'),xscrollcommand=scrollx.set,yscrollcommand=scrolly.set)
         scrollx.pack(side=BOTTOM,fill=X)
         scrolly.pack(side=RIGHT,fill=Y)
         scrollx.config(command=self.studentsList.xview)
@@ -102,8 +116,8 @@ class UpdateStudentInfo:
         self.studentsList.heading('stdnum',text='Student No')
         self.studentsList.heading('fname',text='First Name')
         self.studentsList.heading('lname',text='Last Name')
-        self.studentsList.heading('classroom',text='Classroom')
         self.studentsList.heading('gender',text='Gender')
+        self.studentsList.heading('classroom',text='Classroom')
         self.studentsList.heading('phone',text='Phone No')
         self.studentsList.heading('email',text='Email')
         self.studentsList.heading('dob',text='DOB')
@@ -142,7 +156,7 @@ class UpdateStudentInfo:
         databaseConnection.commit()
         databaseConnection.close()
 
-    def getStudentDetails(self,values=""):
+    def getStudentDetails(self,value=""):
         focusedStudent= self.studentsList.focus()
         tabelContent = self.studentsList.item(focusedStudent)
         studentDetailsRow =tabelContent['values']
@@ -150,16 +164,52 @@ class UpdateStudentInfo:
         self.studentNo.set(studentDetailsRow[0])
         self.firstName.set(studentDetailsRow[1])
         self.lastName.set(studentDetailsRow[2])
-        self.gender.set(studentDetailsRow[4])
+        self.gender.set(studentDetailsRow[3])
         self.date.set(studentDetailsRow[-2][0])
         self.month.set(studentDetailsRow[-2][2:6])
         self.year.set(studentDetailsRow[-2][6:])
         self.phone.set(studentDetailsRow[5])
         self.email.set(studentDetailsRow[6])
         self.address.set(studentDetailsRow[-1])
-        self.grade.set(studentDetailsRow[3][0])
-        self.section.set(studentDetailsRow[3][-1])
+        self.grade.set(studentDetailsRow[4][0])
+        self.section.set(studentDetailsRow[4][-1])
 
+
+    def updateStudentDetails(self):
+    
+        databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
+        commandSelected = databaseConnection.cursor()
+        formattedDOB = self.date.get() + " " + self.month.get()+" "+self.year.get()
+        formattedClassroom = self.grade.get() + " " + self.section.get()
+        commandSelected.execute("UPDATE student SET `First Name`=%s,`Last Name`=%s,`Classroom`=%s,`Gender`=%s,`Phone No`=%s,`Email`=%s,`DOB`=%s,`Address`=%s WHERE (`Student No`=%s)",(
+                                                                                                                                                                    
+                                                                                                                                                                    self.firstName.get(),
+                                                                                                                                                                    self.lastName.get(),
+                                                                                                                                                                    formattedClassroom,
+                                                                                                                                                                    self.gender.get(),
+                                                                                                                                                                    self.phone.get(),
+                                                                                                                                                                    self.email.get(),
+                                                                                                                                                                    formattedDOB,
+                                                                                                                                                                    self.address.get(),
+                                                                                                                                                                    self.studentNo.get()
+        ))
+        messagebox.showinfo("SUCCESS","Information has been updated.")
+        databaseConnection.commit()
+        self.showStudentList()
+        databaseConnection.close()
+
+    def deleteStudent(self):
+
+        databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
+        commandSelected = databaseConnection.cursor()
+        commandSelected.execute("DELETE FROM student WHERE (`Student No` = %s)",(self.studentNo.get(),))
+        
+        databaseConnection.commit()
+        self.showStudentList()
+        databaseConnection.close()
+
+
+        
 
 
 if __name__ == "__main__":

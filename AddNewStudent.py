@@ -42,14 +42,22 @@ class AddNewStudent:
         Label(root,text='Last Name ', font=("times new roman",13)).place(x=70,y=170)
         ttk.Entry(root,width=20,textvariable=self.lastName,font=("times new roman",13)).place(x=190,y=170)
         Label(root,text='Gender ', font=("times new roman",13)).place(x=70,y=210)
-        Combobox(root, state="readonly",value= ['MALE','FEMALE','OTHERS'],font=("times new roman",13), textvariable=self.gender,width = 8,height=10).place(x=190,y=210)
+        genderCombobox = Combobox(root, state="readonly",value= ['MALE','FEMALE','OTHERS'],font=("times new roman",13), textvariable=self.gender,width = 8,height=10)
+        genderCombobox.place(x=190,y=210)
+        genderCombobox.current(0)
         Label(root,text='Date of Birth:', font=("times new roman",13)).place(x=70,y=250)
         Label(root,text='Date', font=("times new roman",13)).place(x=70,y=280)
-        Combobox(root, state="readonly",value=dates,font=("times new roman",13), textvariable=self.date,width = 2,height=10).place(x=110,y=280)
+        dateCombobox=Combobox(root, state="readonly",value=dates,font=("times new roman",13), textvariable=self.date,width = 2,height=10)
+        dateCombobox.place(x=110,y=280)
+        dateCombobox.current(0)
         Label(root,text='Month', font=("times new roman",13)).place(x=155,y=280)
-        Combobox(root, state="readonly",value=month,font=("times new roman",13), textvariable=self.month,width = 4,height=10).place(x=210,y=280)
+        monthCombobox=Combobox(root, state="readonly",value=month,font=("times new roman",13), textvariable=self.month,width = 4,height=10)
+        monthCombobox.place(x=210,y=280)
+        monthCombobox.current(0)
         Label(root,text='Year', font=("times new roman",13)).place(x=270,y=280)
-        Combobox(root, state="readonly",value=year,font=("times new roman",13), textvariable=self.year,width = 5,height=10).place(x=310,y=280)
+        yearCombobox=Combobox(root, state="readonly",value=year,font=("times new roman",13), textvariable=self.year,width = 5,height=10)
+        yearCombobox.place(x=310,y=280)
+        yearCombobox.current(0)
         Label(root,text='Phone No ', font=("times new roman",13)).place(x=70,y=320)
         ttk.Entry(root,textvariable=self.phone,width=20,font=("times new roman",13)).place(x=190,y=320)
         Label(root,text='Email ', font=("times new roman",13)).place(x=70,y=360)
@@ -58,7 +66,9 @@ class AddNewStudent:
         Entry(root,width=20,textvariable=self.address,font=("times new roman",13)).place(x=190,y=400,height=35)
         Label(root,text='Assigned Classroom:', font=("times new roman",13)).place(x=70,y=440)
         Label(root,text='Grade ', font=("times new roman",13)).place(x=70,y=470)
-        Combobox(root, state="readonly",value=list(range(1, 13)), textvariable=self.grade,width = 4,height=10,font=("times new roman",13)).place(x=150,y=470)
+        gradeCombobox=Combobox(root, state="readonly",value=list(range(1, 13)), textvariable=self.grade,width = 4,height=10,font=("times new roman",13))
+        gradeCombobox.place(x=150,y=470)
+        gradeCombobox.current(0)
         Label(root,text='Section ', font=("times new roman",13)).place(x=220,y=470)
         sectionCombo=ttk.Combobox(root, state="readonly",value= ['A','B','C','D','E'], textvariable=self.section,width = 4,height=10)
         sectionCombo.place(x=290,y=470)
@@ -67,8 +77,9 @@ class AddNewStudent:
         Button(root,height=1,width=20,text="Close", activebackground = "navy blue", activeforeground = "white", bg="azure3",command = root.withdraw,cursor="hand2").place(x=290,y=530)
 
     def addStudentToDb(self):
-        if self.section.get()=="":
+        if(self.validateInput()!=True):
             messagebox.showerror('Error','All fields are required', parent=self.root)
+            
         else:
             try:
                 databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
@@ -79,21 +90,27 @@ class AddNewStudent:
                                                         self.studentNo.get(),
                                                         self.firstName.get(),
                                                         self.lastName.get(),
-                                                        formattedClassroom,
                                                         self.gender.get(),
+                                                        formattedClassroom,
                                                         self.phone.get(),
                                                         self.email.get(),
                                                         formattedDOB,
                                                         self.address.get()
                 ))
-                messagebox.showinfo("SUCCESS","New student has been successfully Added to the Database")
+                messagebox.showinfo("SUCCESS","New student added.")
                 databaseConnection.commit()
-                UpdateStudentInfo.showStudentList()
+                studentTable = UpdateStudentInfo(self.root)
+                studentTable.showStudentList()
                 databaseConnection.close()
             except Exception as e:
                 messagebox.showwarning("Warning","Something went wrong! ")
                 print(e)
 
+    def validateInput(self):
+        if(self.firstName.get() == "" or self.lastName.get() == "" or self.phone.get() == "" or self.email.get() == "" or self.address.get() == "" ):
+            return False
+        else:
+            return True;  
 
 
 if __name__ == "__main__":
