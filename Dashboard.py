@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter.ttk import Combobox
-from tkinter import ttk
+from tkinter import ttk,messagebox
+from tkinter.messagebox import askyesno
 from AddNewStudent import AddNewStudent
 from UpdateStudentInfo import UpdateStudentInfo
 import mysql.connector
@@ -14,19 +15,33 @@ class Dashboard:
         root.title("Student Management System")
         root.geometry("1540x800+0+0")
 
+        self.studentNo = StringVar()
+        self.firstName=StringVar()
+        self.lastName=StringVar()
+        self.gender=StringVar()
+        self.date=StringVar()
+        self.month=StringVar()
+        self.year=StringVar()
+        self.phone=StringVar()
+        self.email=StringVar()
+        self.address=StringVar()
+        self.grade=StringVar()
+        self.section=StringVar()
+       
+
 #===========================================================================Header====================================================================================================================
         Label(root,text="STUDENT MANAGEMENT SYSTEM",bg = "DeepSkyBlue4",fg="white", font =("times new roman", 30,"bold")).place(x=0,y=0,width=1540,height=50)
         sideBar = Frame(root,bg = "DeepSkyBlue4", relief = RIDGE).place(x=0,y=50,width=240,height=750)
  
  #========================================================================== Side Nav Bar ============================================================================================================       
        
-        Button(sideBar,height=3,width=30,text="Add new Student", activeforeground = "white", font =("times new roman", 10), bg="azure3",command = self.addStudent,cursor="hand2").place(x=10,y=100)
-        Button(sideBar,height=3,width=30,text="Update Student", bg="azure3", font =("times new roman", 10),activeforeground = "white",command = self.updateStdntInfo,cursor="hand2").place(x=10,y=170)
+        Button(sideBar,height=2,width=20,text="Add new Student", activeforeground = "white", font =("times new roman", 14), bg="azure3",command = self.addStudent,cursor="hand2").place(x=10,y=100)
+        Button(sideBar,height=2,width=20,text="Update Student", bg="azure3", font =("times new roman", 14),activeforeground = "white",command = self.updateStdntInfo,cursor="hand2").place(x=10,y=170)
         
 #===========================================================================Student List ==============================================================================================================
 
         stdntListFrame = Frame(self.root)
-        stdntListFrame.place(x=260,y=70,width=800,height =700)
+        stdntListFrame.place(x=260,y=70,width=900,height =600)
 
         searchLabel= Label(stdntListFrame,text='Search By', font=("times new roman",13))
         searchLabel.grid(row=0,column=0,sticky=W)
@@ -39,10 +54,11 @@ class Dashboard:
         searchButton.grid(row=0,column=3,padx=4,pady=4)
 
         
-        refreshButton = Button(stdntListFrame,height=1,text="Refresh List",font=("times new roman",11), activebackground = "navy blue", command=self.refreshList,activeforeground = "white",bg="azure3", cursor="hand2")
+        refreshButton = Button(stdntListFrame, text="Refresh List",font=("times new roman",11),borderwidth=1, activebackground = "navy blue", command=self.refreshList,activeforeground = "white",bg="azure3", cursor="hand2")
         refreshButton.grid(row=0,column=5,padx=4,pady=4)
+        
 
-        showAllButton = Button(stdntListFrame,height=1,text="Show All",font=("times new roman",11), activebackground = "navy blue", activeforeground = "white",bg="azure3", cursor="hand2")
+        showAllButton = Button(stdntListFrame,height=1,text="Show All",font=("times new roman",11), borderwidth=1,activebackground = "navy blue", activeforeground = "white",bg="azure3", cursor="hand2")
         showAllButton.grid(row=0,column=4,padx=4,pady=4)
 
         listFrame = Frame(stdntListFrame)
@@ -87,7 +103,16 @@ class Dashboard:
         self.studentsList.bind("<ButtonRelease-1>",self.getStudentDetails)
         self.showStudentList()
 
+        deleteButton = Button(self.root,height=1,width=20,text="Delete Selection",font=("times new roman",11), command=self.deleteStudent,borderwidth=0,activebackground = "navy blue", activeforeground = "white",bg="azure3", cursor="hand2")
+        deleteButton.place(x=300,y=700)
+       
+#================================================================= Preview ====================================================================================================
+        previewFrame = Frame(self.root)
+        previewFrame.place(x=1180,y=100,width=450,height =600)
 
+        previewLabel= Label(previewFrame,text='Student Preview', font=("times new roman",17,"bold"))
+        previewLabel.grid(row=0,column=1,sticky=W)
+        
     def refreshList(self):
         self.showStudentList()
 
@@ -129,6 +154,53 @@ class Dashboard:
         self.address.set(studentDetailsRow[-1])
         self.grade.set(studentDetailsRow[4][0])
         self.section.set(studentDetailsRow[4][-1])
+
+        previewFrame = Frame(self.root)
+        previewFrame.place(x=1200,y=150,width=430,height =580)
+
+        fullName= "Full Name:  {fname} {lname}".format(fname = studentDetailsRow[1], lname = studentDetailsRow[2])
+        gender = "Gender: {gender}".format(gender = studentDetailsRow[3])
+        classroom = "Classroom: {classroom}".format(classroom=studentDetailsRow[4])
+        phone="Phone Number: {phone}".format(phone=studentDetailsRow[5])
+        email="Email: {email}".format(email=studentDetailsRow[6])
+        dob="Date of Birth: {dob}".format(dob = studentDetailsRow[-2])
+
+        previewName = Label(previewFrame,text=fullName, font=("times new roman",13))
+        previewName.grid(row=0,column=0,sticky=W)
+
+        genderPreview = Label(previewFrame,text=gender, font=("times new roman",13))
+        genderPreview.grid(row=1,column=0,sticky=W)
+
+        classroomPreview = Label(previewFrame,text=classroom, font=("times new roman",13))
+        classroomPreview.grid(row=2,column=0,sticky=W)
+
+        phonePreview = Label(previewFrame,text=phone, font=("times new roman",13))
+        phonePreview.grid(row=3,column=0,sticky=W)
+        
+        
+        emailPreview = Label(previewFrame,text=email, font=("times new roman",13))
+        emailPreview.grid(row=4,column=0,sticky=W)
+
+        phonePreview = Label(previewFrame,text=dob, font=("times new roman",13))
+        phonePreview.grid(row=5,column=0,sticky=W)
+       
+       
+
+        
+    def deleteStudent(self):
+
+        answer = askyesno(title='confirmation',
+                    message='Do you want to delete the selected student?')
+        if answer:
+        
+            databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
+            commandSelected = databaseConnection.cursor()
+            commandSelected.execute("DELETE FROM student WHERE (`Student No` = %s)",(self.studentNo.get(),))
+            
+            databaseConnection.commit()
+            self.showStudentList()
+            databaseConnection.close()
+
 
 
 if __name__ == "__main__":

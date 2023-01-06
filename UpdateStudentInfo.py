@@ -81,7 +81,7 @@ class UpdateStudentInfo:
         sectionCombo.current(0)
         Label(root,text='Section ', font=("times new roman",13)).place(x=220,y=470)
         Button(root,height=1,width=20,font=("times new roman",13), text="Update", activebackground = "navy blue", activeforeground = "white",bg="azure3", command=self.updateStudentDetails,cursor="hand2").place(x=460,y=600)
-        Button(root,height=1,width=20,font=("times new roman",13), text="Close", activebackground = "navy blue", activeforeground = "white", bg="azure3",command = self.deleteStudent,cursor="hand2").place(x=680,y=600)
+        Button(root,height=1,width=20,font=("times new roman",13), text="Close", activebackground = "navy blue", activeforeground = "white", bg="azure3",command = root.withdraw,cursor="hand2").place(x=680,y=600)
 
         #=================================================================Student List Frame=========================================================================================================================
         #============================================================================================================================================================================================================
@@ -155,8 +155,6 @@ class UpdateStudentInfo:
                 self.studentsList.insert("",END,values = everyStudent)
 
         databaseConnection.commit()
-        # studentTable = Dashboard(self.root)
-        # studentTable.showStudentList()
         databaseConnection.close()
 
     def getStudentDetails(self,value=""):
@@ -179,40 +177,44 @@ class UpdateStudentInfo:
 
 
     def updateStudentDetails(self):
-    
-        databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
-        commandSelected = databaseConnection.cursor()
-        formattedDOB = self.date.get() + " " + self.month.get()+" "+self.year.get()
-        formattedClassroom = self.grade.get() + " " + self.section.get()
-        commandSelected.execute("UPDATE student SET `First Name`=%s,`Last Name`=%s,`Classroom`=%s,`Gender`=%s,`Phone No`=%s,`Email`=%s,`DOB`=%s,`Address`=%s WHERE (`Student No`=%s)",(
-                                                                                                                                                                    
-                                                                                                                                                                    self.firstName.get(),
-                                                                                                                                                                    self.lastName.get(),
-                                                                                                                                                                    formattedClassroom,
-                                                                                                                                                                    self.gender.get(),
-                                                                                                                                                                    self.phone.get(),
-                                                                                                                                                                    self.email.get(),
-                                                                                                                                                                    formattedDOB,
-                                                                                                                                                                    self.address.get(),
-                                                                                                                                                                    self.studentNo.get()
-        ))
-        messagebox.showinfo("SUCCESS","Information has been updated.")
-        databaseConnection.commit()
-        self.showStudentList()
-        databaseConnection.close()
 
-    def deleteStudent(self):
+        if(self.validateInput()!=True):
+            messagebox.showerror('Error','All fields are required', parent=self.root)
+            
+        else:
+            try:
+                databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
+                commandSelected = databaseConnection.cursor()
+                formattedDOB = self.date.get() + " " + self.month.get()+" "+self.year.get()
+                formattedClassroom = self.grade.get() + " " + self.section.get()
+                commandSelected.execute("UPDATE student SET `First Name`=%s,`Last Name`=%s,`Classroom`=%s,`Gender`=%s,`Phone No`=%s,`Email`=%s,`DOB`=%s,`Address`=%s WHERE (`Student No`=%s)",(
+                                                                                                                                                                            
+                                                                                                                                                                            self.firstName.get(),
+                                                                                                                                                                            self.lastName.get(),
+                                                                                                                                                                            formattedClassroom,
+                                                                                                                                                                            self.gender.get(),
+                                                                                                                                                                            self.phone.get(),
+                                                                                                                                                                            self.email.get(),
+                                                                                                                                                                            formattedDOB,
+                                                                                                                                                                            self.address.get(),
+                                                                                                                                                                            self.studentNo.get()))
+            
+                messagebox.showinfo("SUCCESS","Information updated. Try Refreshing the list")
+                databaseConnection.commit()
+                self.showStudentList()
+                databaseConnection.close()
+                
+            except Exception as e:
+                    messagebox.showwarning("Warning","Something went wrong! ")
+                    print(e)
 
-        databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
-        commandSelected = databaseConnection.cursor()
-        commandSelected.execute("DELETE FROM student WHERE (`Student No` = %s)",(self.studentNo.get(),))
-        
-        databaseConnection.commit()
-        self.showStudentList()
-        databaseConnection.close()
 
-
-        
+ 
+    def validateInput(self):
+        if(self.firstName.get() == "" or self.lastName.get() == "" or self.phone.get() == "" or self.email.get() == "" or self.address.get() == "" ):
+            return False
+        else:
+            return True;  
 
 
 if __name__ == "__main__":
