@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter.ttk import Combobox
 from tkinter import ttk,messagebox
 import mysql.connector
+# from Dashboard import Dashboard
 
 month = ('JAN','FEB','MAR','APR','MAY','JUN', 'JUL','AUG','SEP','OCT','NOV','DEC')
 dates = list(range(1,32))
@@ -33,7 +34,7 @@ class UpdateStudentInfo:
         lblTitle = Label(self.root,text='UPDATE STUDENT DETAILS',bg = "DeepSkyBlue4",fg="white", font =("times new roman", 30,"bold"))
         lblTitle.place(x=0,y=0,width=1340,height=50)
         
-        infoFrame = Frame(self.root,bd=4, relief=GROOVE)
+        infoFrame = Frame(self.root)
         infoFrame.place(x=20,y=70,width=400,height =500)
         
 
@@ -85,7 +86,7 @@ class UpdateStudentInfo:
         #=================================================================Student List Frame=========================================================================================================================
         #============================================================================================================================================================================================================
 
-        stdntListFrame = Frame(self.root,bd=4, relief=GROOVE)
+        stdntListFrame = Frame(self.root)
         stdntListFrame.place(x=450,y=70,width=875,height =500)
 
         searchLabel= Label(stdntListFrame,text='Search By', font=("times new roman",13))
@@ -101,7 +102,7 @@ class UpdateStudentInfo:
         showAllButton = Button(stdntListFrame,height=1,text="Show All",font=("times new roman",11), activebackground = "navy blue", activeforeground = "white",bg="azure3", cursor="hand2")
         showAllButton.grid(row=0,column=4,padx=4,pady=4)
 
-        listFrame = Frame(stdntListFrame,bd=4,relief=GROOVE)
+        listFrame = Frame(stdntListFrame)
         listFrame.place(x=10,y=50,width=850,height=435)
 
         scrollx= ttk.Scrollbar(listFrame,orient=HORIZONTAL)
@@ -154,6 +155,8 @@ class UpdateStudentInfo:
                 self.studentsList.insert("",END,values = everyStudent)
 
         databaseConnection.commit()
+        # studentTable = Dashboard(self.root)
+        # studentTable.showStudentList()
         databaseConnection.close()
 
     def getStudentDetails(self,value=""):

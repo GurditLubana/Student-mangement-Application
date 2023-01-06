@@ -3,6 +3,8 @@ from tkinter.ttk import Combobox
 from tkinter import ttk,messagebox
 import random
 from UpdateStudentInfo import UpdateStudentInfo
+
+
 import mysql.connector
 
 
@@ -101,6 +103,7 @@ class AddNewStudent:
                 databaseConnection.commit()
                 studentTable = UpdateStudentInfo(self.root)
                 studentTable.showStudentList()
+                
                 databaseConnection.close()
             except Exception as e:
                 messagebox.showwarning("Warning","Something went wrong! ")
