@@ -36,21 +36,26 @@ class Dashboard:
  #========================================================================== Side Nav Bar ============================================================================================================       
        
         Button(sideBar,height=2,width=20,text="Add new Student", activeforeground = "white", font =("times new roman", 14), bg="azure3",command = self.addStudent,cursor="hand2").place(x=10,y=100)
-        Button(sideBar,height=2,width=20,text="Update Student", bg="azure3", font =("times new roman", 14),activeforeground = "white",command = self.updateStdntInfo,cursor="hand2").place(x=10,y=170)
+        Button(sideBar,height=2,width=20,text="Update Record", bg="azure3", font =("times new roman", 14),activeforeground = "white",command = self.updateStdntInfo,cursor="hand2").place(x=10,y=170)
         
 #===========================================================================Student List ==============================================================================================================
 
         stdntListFrame = Frame(self.root)
-        stdntListFrame.place(x=260,y=70,width=900,height =600)
+        stdntListFrame.place(x=300,y=70,width=900,height =600)
 
         searchLabel= Label(stdntListFrame,text='Search By', font=("times new roman",13))
         searchLabel.grid(row=0,column=0,sticky=W)
-        searchByCombo=ttk.Combobox(stdntListFrame, state="readonly",value= ['Student Number','First Name','Last Name','Gender','Classroom','Phone Number','Email','DOB'], width = 14,height=10,font=("times new roman",13))
+
+        self.searchByValue = StringVar()
+        searchByCombo=ttk.Combobox(stdntListFrame, state="readonly",textvariable = self.searchByValue,value= ['Student Number','First Name','Last Name','Gender','Classroom','Phone','Email','DOB'], width = 14,height=10,font=("times new roman",13))
         searchByCombo.grid(row=0,column=1,padx=4,pady=4)
         searchByCombo.current(0)
-        searchEntry= ttk.Entry(stdntListFrame,width=20,font=("times new roman",13))
+
+        self.searchByEntry = StringVar()
+        searchEntry= ttk.Entry(stdntListFrame,width=20,textvariable = self.searchByEntry,font=("times new roman",13))
         searchEntry.grid(row=0,column=2,padx=4,pady=4)
-        searchButton = Button(stdntListFrame,height=1,text="Search",font=("times new roman",11), activebackground = "navy blue", activeforeground = "white",bg="azure3", cursor="hand2")
+
+        searchButton = Button(stdntListFrame,height=1,command = self.searchExecute,text="Search",font=("times new roman",11), activebackground = "navy blue", activeforeground = "white",bg="azure3", cursor="hand2")
         searchButton.grid(row=0,column=3,padx=4,pady=4)
 
         
@@ -58,7 +63,7 @@ class Dashboard:
         refreshButton.grid(row=0,column=5,padx=4,pady=4)
         
 
-        showAllButton = Button(stdntListFrame,height=1,text="Show All",font=("times new roman",11), borderwidth=1,activebackground = "navy blue", activeforeground = "white",bg="azure3", cursor="hand2")
+        showAllButton = Button(stdntListFrame,height=1,text="Show All",font=("times new roman",11), borderwidth=1,activebackground = "navy blue",command=self.refreshList, activeforeground = "white",bg="azure3", cursor="hand2")
         showAllButton.grid(row=0,column=4,padx=4,pady=4)
 
         listFrame = Frame(stdntListFrame)
@@ -104,17 +109,18 @@ class Dashboard:
         self.showStudentList()
 
         deleteButton = Button(self.root,height=1,width=20,text="Delete Selection",font=("times new roman",11), command=self.deleteStudent,borderwidth=0,activebackground = "navy blue", activeforeground = "white",bg="azure3", cursor="hand2")
-        deleteButton.place(x=300,y=700)
+        deleteButton.place(x=650,y=700)
        
 #================================================================= Preview ====================================================================================================
         previewFrame = Frame(self.root)
-        previewFrame.place(x=1180,y=100,width=450,height =600)
+        previewFrame.place(x=1220,y=100,width=500,height =600)
 
         previewLabel= Label(previewFrame,text='Student Preview', font=("times new roman",17,"bold"))
         previewLabel.grid(row=0,column=1,sticky=W)
         
     def refreshList(self):
         self.showStudentList()
+
 
     def showStudentList(self):
         databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
@@ -158,6 +164,7 @@ class Dashboard:
         previewFrame = Frame(self.root)
         previewFrame.place(x=1200,y=150,width=430,height =580)
 
+        studentNum = "Student Number: {num}".format(num=studentDetailsRow[0])
         fullName= "Full Name:  {fname} {lname}".format(fname = studentDetailsRow[1], lname = studentDetailsRow[2])
         gender = "Gender: {gender}".format(gender = studentDetailsRow[3])
         classroom = "Classroom: {classroom}".format(classroom=studentDetailsRow[4])
@@ -165,27 +172,28 @@ class Dashboard:
         email="Email: {email}".format(email=studentDetailsRow[6])
         dob="Date of Birth: {dob}".format(dob = studentDetailsRow[-2])
 
+        previewNum = Label(previewFrame,text=studentNum, font=("times new roman",13))
+        previewNum.grid(row=0,column=0,sticky=W)
+
         previewName = Label(previewFrame,text=fullName, font=("times new roman",13))
-        previewName.grid(row=0,column=0,sticky=W)
+        previewName.grid(row=1,column=0,sticky=W)
 
         genderPreview = Label(previewFrame,text=gender, font=("times new roman",13))
-        genderPreview.grid(row=1,column=0,sticky=W)
+        genderPreview.grid(row=2,column=0,sticky=W)
 
         classroomPreview = Label(previewFrame,text=classroom, font=("times new roman",13))
-        classroomPreview.grid(row=2,column=0,sticky=W)
+        classroomPreview.grid(row=3,column=0,sticky=W)
 
         phonePreview = Label(previewFrame,text=phone, font=("times new roman",13))
-        phonePreview.grid(row=3,column=0,sticky=W)
+        phonePreview.grid(row=4,column=0,sticky=W)
         
         
         emailPreview = Label(previewFrame,text=email, font=("times new roman",13))
-        emailPreview.grid(row=4,column=0,sticky=W)
+        emailPreview.grid(row=5,column=0,sticky=W)
 
         phonePreview = Label(previewFrame,text=dob, font=("times new roman",13))
-        phonePreview.grid(row=5,column=0,sticky=W)
+        phonePreview.grid(row=6,column=0,sticky=W)
        
-       
-
         
     def deleteStudent(self):
 
@@ -201,7 +209,21 @@ class Dashboard:
             self.showStudentList()
             databaseConnection.close()
 
+    def searchExecute(self):
 
+            databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='student_list')
+            commandSelected = databaseConnection.cursor()
+            print(str(self.searchByValue.get()) + " " + str(self.searchByEntry.get()))
+
+            commandSelected.execute("SELECT * FROM student WHERE (`{searchbyAttribute}`) LIKE '%{searchEntry}%'".format(searchbyAttribute=str(self.searchByValue.get()),searchEntry=str(self.searchByEntry.get())))
+            stdntRows = commandSelected.fetchall()
+
+            if(len(stdntRows)!=0):
+                self.studentsList.delete(*self.studentsList.get_children())
+                for i in stdntRows:
+                    self.studentsList.insert("",END,values=i)
+            databaseConnection.commit()
+            databaseConnection.close()
 
 if __name__ == "__main__":
         root = Tk()

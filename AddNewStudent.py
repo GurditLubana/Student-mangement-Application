@@ -3,8 +3,6 @@ from tkinter.ttk import Combobox
 from tkinter import ttk,messagebox
 import random
 from UpdateStudentInfo import UpdateStudentInfo
-
-
 import mysql.connector
 
 
