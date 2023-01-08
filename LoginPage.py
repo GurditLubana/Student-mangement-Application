@@ -63,6 +63,8 @@ class LoginPage:
         elif(stdntRows[0][1]  == str(self.passwordEntry.get())):
             self.openDashboardWindow = Toplevel(self.root)
             self.app=Dashboard(self.openDashboardWindow)
+        else:
+            messagebox.showerror('Error','Wrong Password', parent=self.root)
         databaseConnection.commit()
         databaseConnection.close()    
         
