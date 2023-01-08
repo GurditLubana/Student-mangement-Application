@@ -66,14 +66,21 @@ class Signup:
                 try:
                     databaseConnection=mysql.connector.connect(host='localhost',username="root",password='9878059867gG@',database='login_users')
                     myCursor = databaseConnection.cursor()
-                    myCursor.execute("INSERT INTO users VALUES(%s,%s)",(
-                                                            self.usernameEntry.get(),
-                                                            self.passwordEntry.get(),
-                    ))
-                    messagebox.showinfo("SUCCESS","Account Created.")
+                    myCursor.execute("SELECT * FROM users WHERE (`Username`) LIKE '%{searchEntry}%'".format(searchEntry=str(self.usernameEntry.get())))
+                    stdntRows = myCursor.fetchall()
+                    if(len(stdntRows)!=0):
+                        messagebox.showerror('Error','Username already exist. Try different username.', parent=self.root)
+                    
+                    else:
+                        myCursor.execute("INSERT INTO users VALUES(%s,%s)",(
+                                                                self.usernameEntry.get(),
+                                                                self.passwordEntry.get(),
+                        ))
+                        messagebox.showinfo("SUCCESS","Account Created.")
+                        self.root.withdraw()
                     databaseConnection.commit()
                     databaseConnection.close()
-                    self.root.withdraw()
+                    
 
                 except Exception as e:
                     messagebox.showwarning("Warning","Something went wrong! ")
