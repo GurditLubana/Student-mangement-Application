@@ -49,8 +49,8 @@ class LoginPage:
         self.app=Dashboard(self.openDashboardWindow)
 
     def signupWindow(self):
-        self.openDashboardWindow = Toplevel(self.root)
-        self.app=Signup(self.openDashboardWindow)
+        self.opensignupWindowWindow = Toplevel(self.root)
+        self.app= Signup(self.opensignupWindowWindow)
 
 
 if __name__ == "__main__":
