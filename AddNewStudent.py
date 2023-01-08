@@ -101,8 +101,8 @@ class AddNewStudent:
                 databaseConnection.commit()
                 studentTable = UpdateStudentInfo(self.root)
                 studentTable.showStudentList()
-                
                 databaseConnection.close()
+                self.root.withdraw()
             except Exception as e:
                 messagebox.showwarning("Warning","Something went wrong! ")
                 print(e)

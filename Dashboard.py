@@ -68,7 +68,7 @@ class Dashboard:
         showAllButton.grid(row=0,column=4,padx=4,pady=4)
 
         listFrame = Frame(stdntListFrame)
-        listFrame.place(x=10,y=50,width=850,height=650)
+        listFrame.place(x=10,y=50,width=850,height=550)
 
         scrollx= ttk.Scrollbar(listFrame,orient=HORIZONTAL)
         scrolly= ttk.Scrollbar(listFrame,orient=VERTICAL)
