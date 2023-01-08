@@ -91,7 +91,7 @@ class UpdateStudentInfo:
 
         searchLabel= Label(stdntListFrame,text='Search By', font=("times new roman",13))
         searchLabel.grid(row=0,column=0,sticky=W)
-        searchByCombo=ttk.Combobox(stdntListFrame, state="readonly",value= ['Student Number','First Name','Last Name','Gender','Classroom','Phone Number','Email','DOB'], width = 14,height=10,font=("times new roman",13))
+        searchByCombo=ttk.Combobox(stdntListFrame, state="readonly",value= ['Student Number','First Name','Last Name','Gender','Classroom','Phone No','Email','DOB'], width = 14,height=10,font=("times new roman",13))
         searchByCombo.grid(row=0,column=1,padx=4,pady=4)
         searchByCombo.current(0)
         searchEntry= ttk.Entry(stdntListFrame,width=20,font=("times new roman",13))
@@ -199,7 +199,7 @@ class UpdateStudentInfo:
                                                                                                                                                                             self.address.get(),
                                                                                                                                                                             self.studentNo.get()))
             
-                messagebox.showinfo("SUCCESS","Information updated. Try Refreshing the list")
+                messagebox.showinfo("SUCCESS","Information updated.")
                 databaseConnection.commit()
                 self.showStudentList()
                 databaseConnection.close()

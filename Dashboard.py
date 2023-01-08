@@ -31,12 +31,13 @@ class Dashboard:
 
 #===========================================================================Header====================================================================================================================
         Label(root,text="STUDENT MANAGEMENT SYSTEM",bg = "DeepSkyBlue4",fg="white", font =("times new roman", 30,"bold")).place(x=0,y=0,width=1540,height=50)
-        sideBar = Frame(root,bg = "DeepSkyBlue4", relief = RIDGE).place(x=0,y=50,width=240,height=750)
+        sideBar = Frame(self.root,bg = "DeepSkyBlue4", relief = RIDGE).place(x=0,y=50,width=240,height=750)
  
  #========================================================================== Side Nav Bar ============================================================================================================       
        
-        Button(sideBar,height=2,width=20,text="Add new Student", activeforeground = "white", font =("times new roman", 14), bg="azure3",command = self.addStudent,cursor="hand2").place(x=10,y=100)
-        Button(sideBar,height=2,width=20,text="Update Record", bg="azure3", font =("times new roman", 14),activeforeground = "white",command = self.updateStdntInfo,cursor="hand2").place(x=10,y=170)
+        Button(self.root,height=2,width=20,text="Add new Student", activeforeground = "white", font =("times new roman", 14), bg="azure3",command = self.addStudent,cursor="hand2").place(x=10,y=100)
+        Button(self.root,height=2,width=20,text="Update Record", bg="azure3", font =("times new roman", 14),activeforeground = "white",command = self.updateStdntInfo,cursor="hand2").place(x=10,y=170)
+        Button(self.root,height=2,width=20,text="Logout", bg="azure3", font =("times new roman", 14),activeforeground = "white",command = self.logout,cursor="hand2").place(x=10,y=240)
         
 #===========================================================================Student List ==============================================================================================================
 
@@ -142,6 +143,9 @@ class Dashboard:
     def updateStdntInfo(self):
         self.updateStdntInfoWindow = Toplevel(self.root)
         self.newWindow=UpdateStudentInfo(self.updateStdntInfoWindow)
+
+    def logout(self):
+        self.root.destroy()
 
     def getStudentDetails(self,value=""):
         focusedStudent= self.studentsList.focus()
