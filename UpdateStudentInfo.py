@@ -199,7 +199,7 @@ class UpdateStudentInfo:
                                                                                                                                                                             self.address.get(),
                                                                                                                                                                             self.studentNo.get()))
             
-                messagebox.showinfo("SUCCESS","Information updated.")
+                messagebox.showinfo("SUCCESS","Student\'s Information updated.")
                 databaseConnection.commit()
                 self.showStudentList()
                 databaseConnection.close()

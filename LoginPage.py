@@ -26,7 +26,7 @@ class LoginPage:
         loginLabel.place(x=700,y=120)
 
         usernameLabel= Label(self.root,text='Username',font=("times new roman",13),bg='white')
-        usernameLabel.place(x=600,y=210)
+        usernameLabel.place(x=600,y=215)
 
         usernameEntry = Entry(self.root,width=20,bd=0,textvariable=self.usernameEntry,font=("times new roman",13))
         usernameEntry.place(x=600,y=240)
@@ -60,9 +60,13 @@ class LoginPage:
         stdntRows = commandSelected.fetchall()
         if(len(stdntRows)==0):
             messagebox.showerror('Error','Username doesn\'t exist', parent=self.root)
+
         elif(stdntRows[0][1]  == str(self.passwordEntry.get())):
+
+            self.root.state(newstate='iconic')
             self.openDashboardWindow = Toplevel(self.root)
             self.app=Dashboard(self.openDashboardWindow)
+        
         else:
             messagebox.showerror('Error','Wrong Password', parent=self.root)
         databaseConnection.commit()
