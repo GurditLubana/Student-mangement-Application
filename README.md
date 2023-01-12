@@ -1,1 +1,4 @@
-# Library-mangement-Application
+# Student-mangement-Application
+
+##  Application Visuals: 
+![tutorial Image](tutorial.gif)
